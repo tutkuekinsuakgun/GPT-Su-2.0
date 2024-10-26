@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT Su 2.0</title>
+    <style>
+        body {
+            background-color: #f8c9d0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #ff0080;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #ff0080;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #ff0080;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .chat-box {
+            margin-top: 20px;
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+        }
+        .user {
+            color: blue;
+        }
+        .gpt {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GPT Su 2.0</h1>
+        <form id="chat-form">
+            <input type="text" id="input_text" placeholder="Type your message..." autofocus>
+            <br>
+            <button type="submit">Generate</button>
+        </form>
+        <div class="chat-box" id="chat-box">
+            <!-- Chat messages will be appended here -->
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('chat-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const inputText = document.getElementById('input_text').value;
+
+            // Show user's message in the chat
+            const chatBox = document.getElementById('chat-box');
+            const userMessage = `<div class="chat-message user"><strong>You:</strong> ${inputText}</div>`;
+            chatBox.innerHTML += userMessage;
+
+            // Send user's message to the server and get GPT's response
+            fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `input_text=${inputText}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                const gptMessage = `<div class="chat-message gpt"><strong>GPT Su 2.0:</strong> ${data.generated_text}</div>`;
+                chatBox.innerHTML += gptMessage;
+                document.getElementById('input_text').value = ""; // Clear input field
+                chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+            });
+        });
+    </script>
+</body>
+</html>
